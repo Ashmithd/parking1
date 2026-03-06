@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>IoT Parking System</title>
+
+<style>
+
+body{
+font-family: Arial;
+margin:40px;
+}
+
+.card{
+border:1px solid #ccc;
+padding:20px;
+margin:20px 0;
+width:400px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🚗 IoT Smart Parking Dashboard</h1>
+
+
+<div class="card">
+
+<h2>Parking Status</h2>
+
+<p>Total Slots: <span id="total"></span></p>
+<p>Occupied: <span id="occupied"></span></p>
+<p>Available: <span id="available"></span></p>
+
+<button onclick="loadParking()">Refresh Status</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Register Vehicle</h2>
+
+<input id="vehicle_number" placeholder="Vehicle Number">
+<input id="owner_name" placeholder="Owner Name">
+
+<button onclick="registerVehicle()">Register</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Vehicle Entry</h2>
+
+<input id="entry_vehicle" placeholder="Vehicle Number">
+
+<button onclick="vehicleEntry()">Entry</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Vehicle Exit</h2>
+
+<input id="exit_vehicle" placeholder="Vehicle Number">
+
+<button onclick="vehicleExit()">Exit</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Vehicles Currently Inside</h2>
+
+<button onclick="loadVehicles()">Show Vehicles</button>
+
+<ul id="vehicle_list"></ul>
+
+</div>
+
+
+
+<script>
+
+function registerVehicle(){
+
+let vehicle = document.getElementById("vehicle_number").value
+let owner = document.getElementById("owner_name").value
+
+fetch('/register',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+vehicle_number:vehicle,
+owner_name:owner
+})
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(JSON.stringify(data))
+loadParking()
+})
+
+}
+
+
+
+function vehicleEntry(){
+
+let vehicle = document.getElementById("entry_vehicle").value
+
+fetch('/entry',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+vehicle_number:vehicle
+})
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(JSON.stringify(data))
+loadParking()
+})
+
+}
+
+
+
+function vehicleExit(){
+
+let vehicle = document.getElementById("exit_vehicle").value
+
+fetch('/exit',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+vehicle_number:vehicle
+})
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(JSON.stringify(data))
+loadParking()
+})
+
+}
+
+
+
+function loadVehicles(){
+
+fetch('/active_vehicles')
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let list=document.getElementById("vehicle_list")
+
+list.innerHTML=""
+
+data.forEach(v=>{
+
+let item=document.createElement("li")
+
+item.innerText=v.vehicle_number+" | Entry: "+v.entry_time
+
+list.appendChild(item)
+
+})
+
+})
+
+}
+
+
+
+function loadParking(){
+
+fetch('/parking_status')
+
+.then(res=>res.json())
+
+.then(data=>{
+
+document.getElementById("total").innerText=data.total_slots
+document.getElementById("occupied").innerText=data.occupied
+document.getElementById("available").innerText=data.available
+
+})
+
+}
+
+
+
+loadParking()
+
+</script>
+
+</body>
+
+</html>
