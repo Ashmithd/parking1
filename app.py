@@ -12,10 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# ----------------------------
-# DATABASE MODELS
-# ----------------------------
-
 class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     vehicle_number = db.Column(db.String(20), unique=True, nullable=False)
@@ -27,17 +23,11 @@ class EntryLog(db.Model):
     entry_time = db.Column(db.DateTime, nullable=False)
     exit_time = db.Column(db.DateTime, nullable=True)
 
-# ----------------------------
-# ROUTES
-# ----------------------------
 
 @app.route('/')
 def home():
     return render_template("index.html")
 
-# ----------------------------
-# REGISTER VEHICLE
-# ----------------------------
 
 @app.route('/register', methods=['POST'])
 def register_vehicle():
@@ -63,9 +53,6 @@ def register_vehicle():
 
     return jsonify({"message": "Vehicle registered successfully"})
 
-# ----------------------------
-# VEHICLE ENTRY
-# ----------------------------
 
 @app.route('/entry', methods=['POST'])
 def vehicle_entry():
@@ -100,9 +87,6 @@ def vehicle_entry():
 
     return jsonify({"status": "ALLOWED", "message": "Entry logged successfully"})
 
-# ----------------------------
-# VEHICLE EXIT
-# ----------------------------
 
 @app.route('/exit', methods=['POST'])
 def vehicle_exit():
@@ -125,9 +109,7 @@ def vehicle_exit():
 
     return jsonify({"status": "ALLOWED", "message": "Exit logged successfully"})
 
-# ----------------------------
-# VIEW ALL LOGS
-# ----------------------------
+
 
 @app.route('/logs', methods=['GET'])
 def view_logs():
@@ -144,9 +126,7 @@ def view_logs():
 
     return jsonify(result)
 
-# ----------------------------
-# VIEW ACTIVE VEHICLES
-# ----------------------------
+
 
 @app.route('/active', methods=['GET'])
 def view_active():
@@ -163,10 +143,6 @@ def view_active():
         })
 
     return jsonify(result)
-
-# ----------------------------
-# START SERVER
-# ----------------------------
 
 @app.route('/active_vehicles')
 def active_vehicles():
@@ -203,4 +179,5 @@ def parking_status():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
     app.run(debug=True)
